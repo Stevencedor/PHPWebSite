@@ -19,22 +19,24 @@ if($_SERVER["REQUEST_METHOD"]="POST"){
             die("Error: Email already exists in the database.");
         }
 
+        $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
+
         $query = "INSERT INTO users (username, pwd, email, birthdate) VALUES (?, ?, ?, ?);";
 
         $stmt = $pdo->prepare($query);
 
-        $stmt->execute([$username, $pwd, $email, $birthdate]);
+        $stmt->execute([$username, $hashedPwd, $email, $birthdate]);
 
         $pdo = null;
         $stmt = null;
 
-        header("Location: ../index.php");
-
-        die();
+        header("Location: ../index.php?signup=success");
+        exit();
     } catch (PDOException $e) {
         die("Query failed: " . $e->getMessage());
     }
 }
 else {
     header("Location: ../database.php");
+    exit();
 }
